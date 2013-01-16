@@ -227,9 +227,9 @@ package Evocati
 		/**
 		 * 增加粒子
 		 */
-		public function addBatchParticle(batchId:String,life:Number,size:int):void
+		public function addBatchParticle(batchId:String,life:Number,size:int,dir:Vector3D):void
 		{
-			particleSystem.addParticle(batchId,new Vector3D(),new Vector3D(-0.05,0.5,0),life,size);
+			particleSystem.addParticle(batchId,new Vector3D(),dir,life,size);
 		}
 		
 		/**
@@ -487,7 +487,7 @@ package Evocati
 					batchDraw();
 				}
 			}
-			batchUploadTime = getTimer() - time;
+			
 			
 			//渲染粒子
 			context3D.setProgram ( shaderManager.getShaders("PARTICLE_BATCH","COMMON_DXT5"));
@@ -495,12 +495,12 @@ package Evocati
 			{
 				particleSystem.update(id,dTime);
 				renderManager.setBatchParticleData(id);
-				registerManager.setParticleParam(0);
+				registerManager.setParticleParam(0.0002);
 				textureManager.setTexture(id,0);
 				transformManager.setTransform(0,0,0,0,0,0,1,1);
 				batchDrawParticle();
 			}
-			
+			batchUploadTime = getTimer() - time;
 			//渲染单个矩形
 			context3D.setProgram ( shaderManager.getShaders("COMMON","COMMON_DXT5"));
 			registerManager.setFogParam(new Vector3D(),3,new Vector3D(0.5,0.5,0.5));

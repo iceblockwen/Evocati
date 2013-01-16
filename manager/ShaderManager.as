@@ -80,10 +80,10 @@ package Evocati.manager
 				"mov vt0, va0\n" +
 				//移动位置x = vx*t y = vy*t - g*t^2 z =vy*t
 				"mul vt1.xyz, va3.xyz, va4.x\n" +
-//				"mov vt1.w, va4.x\n" +
-//				"mul vt1.w, vt1.w, vt1.w\n" +
-//				"mul vt1.w, vt1.w, vc7.x\n" +
-//				"div vt1.y, vt1.y, vt1.w\n" +
+				"mov vt1.w, va4.x\n" +
+				"mul vt1.w, vt1.w, vt1.w\n" +
+				"mul vt1.w, vt1.w, vc7.x\n" +
+				"sub vt1.y, vt1.y, vt1.w\n" +
 				"add vt0.xyz, vt0.xyz, vt1.xyz\n" +
 				//归一化
 				"div vt0, vt0, vc5\n" +

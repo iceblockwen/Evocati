@@ -9,7 +9,7 @@ package Evocati.configration
 		{
 			Antialising = 0;
 			usePostFx = 0;
-			detail = false;
+			detail = true;
 		}
 	}
 }
