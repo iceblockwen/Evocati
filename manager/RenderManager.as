@@ -8,6 +8,8 @@ package Evocati.manager
 	
 	import Evocati.object.BaseObjInfo;
 	import Evocati.object.Square;
+	import Evocati.particle.BaseParticle;
+	import Evocati.particle.ParticleSystem;
 	import Evocati.scene.BaseScene3D;
 
 	public class RenderManager
@@ -16,6 +18,8 @@ package Evocati.manager
 		private var scene:BaseScene3D
 		
 		public var polyNum:int;
+		
+		private var particleSystem:ParticleSystem;
 		
 		/**
 		 * 单个顶点缓存和数组
@@ -69,6 +73,11 @@ package Evocati.manager
 		public function setScene(scene3d:BaseScene3D):void
 		{
 			scene = scene3d;
+		}
+		
+		public function setParticleSystem(particleSys:ParticleSystem):void
+		{
+			particleSystem = particleSys;
 		}
 		/**
 		 * 设置混合模式
@@ -160,8 +169,6 @@ package Evocati.manager
 			batchMeshIndexData = Vector.<uint>([]);
 			batchMeshVertexData = Vector.<Number>([]);
 			
-			var isEmpty:Boolean = false;
-			
 			var arr:Array = scene._batchObjList[batchId];
 			batchNum = arr.length;
 			if(batchNum <= 0) return true;
@@ -191,6 +198,37 @@ package Evocati.manager
 			batchVertexBuffer.uploadFromVector(batchMeshVertexData, 0, batchMeshVertexData.length/9);
 			return true;
 		}
+		
+		/**
+		 * 上传批量粒子数据给GPU
+		 */
+		public function setBatchParticleData(batchId:String):Boolean
+		{			
+			batchMeshIndexData = Vector.<uint>([]);
+			batchMeshVertexData = Vector.<Number>([]);
+			var arr:Array = particleSystem._particleBatchList[batchId];
+			var len:int = arr.length;
+			if(len <= 0) return true;
+			for (var i:int = 0;i<len;i++)
+			{
+				var obj:BaseParticle = arr[i] as BaseParticle;
+				Square.addSquareIndexByNumber(batchMeshIndexData,i);
+				Square.addParticleVertexPixel(batchMeshVertexData,obj);
+			}			
+			if(batchMeshVertexData.length == 0) return false;
+			
+			if(batchIndexBuffer)
+				batchIndexBuffer.dispose();
+			if(batchVertexBuffer)
+				batchVertexBuffer.dispose();
+			batchIndexBuffer = context3D.createIndexBuffer(batchMeshIndexData.length);
+			batchIndexBuffer.uploadFromVector(batchMeshIndexData,0,batchMeshIndexData.length);
+			
+			batchVertexBuffer = context3D.createVertexBuffer(batchMeshVertexData.length/14, 14); 
+			batchVertexBuffer.uploadFromVector(batchMeshVertexData, 0, batchMeshVertexData.length/14);
+			return true;
+		}
+		
 		/**
 		 * 画缓存中的三角形
 		 */
@@ -218,6 +256,26 @@ package Evocati.manager
 				Context3DVertexBufferFormat.FLOAT_2);
 			context3D.setVertexBufferAt(2, batchVertexBuffer, 5, 
 				Context3DVertexBufferFormat.FLOAT_4);
+			
+			context3D.drawTriangles(batchIndexBuffer, 0, batchMeshIndexData.length/3);
+			
+			polyNum += batchMeshIndexData.length/3;
+		}
+		/**
+		 * 画缓存中的三角形(粒子)
+		 */
+		public function batchDrawParticle():void
+		{
+			context3D.setVertexBufferAt(0, batchVertexBuffer, 0, 
+				Context3DVertexBufferFormat.FLOAT_3);
+			context3D.setVertexBufferAt(1, batchVertexBuffer, 3, 
+				Context3DVertexBufferFormat.FLOAT_2);
+			context3D.setVertexBufferAt(2, batchVertexBuffer, 5, 
+				Context3DVertexBufferFormat.FLOAT_4);
+			context3D.setVertexBufferAt(3, batchVertexBuffer, 9, 
+				Context3DVertexBufferFormat.FLOAT_3);
+			context3D.setVertexBufferAt(4, batchVertexBuffer, 12,
+				Context3DVertexBufferFormat.FLOAT_2);
 			
 			context3D.drawTriangles(batchIndexBuffer, 0, batchMeshIndexData.length/3);
 			

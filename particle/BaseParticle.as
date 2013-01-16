@@ -10,9 +10,10 @@ package Evocati.particle
 		public var life:uint = 0;
 		public var lifeMax:uint = 1000;
 		public var stepCounter:uint = 0;
+		public var speed:Vector3D = new Vector3D();
 		
-		private var lifeScale:Vector.<Number> = new Vector.<Number>([1, 0, 1, 1]);
-		private var rgbaScale:Vector.<Number> = new Vector.<Number>([1, 1, 1, 1]);
+		public var lifeScale:Vector.<Number> = new Vector.<Number>([1, 0, 1, 1]);
+		public var rgbaScale:Vector.<Number> = new Vector.<Number>([1, 1, 1, 1]);
 		private var startSize:Number = 0;
 		private var endSize:Number = 1;
 		
@@ -20,7 +21,7 @@ package Evocati.particle
 		
 		public function BaseParticle(pId:String,pTextureId:String,pSizeX:Number,pSizeY:Number,pX:Number,pY:Number,pZ:Number,pTextureCoordinates:Array = null,prx:Number = 0,pry:Number = 0,prz:Number = 0,nScaleX:Number = 1,nScaleY:Number = 1)
 		{
-			super().apply(arguments);
+			super(pId,pTextureId,pSizeX,pSizeY,pX,pY,pZ,pTextureCoordinates,prx,pry,prz,nScaleX,nScaleY);
 		}
 		
 		public function cloneParticle():BaseParticle
@@ -74,10 +75,12 @@ package Evocati.particle
 			rgbaScale[3] = lifeScale[2];
 		}
 		
-		public function respawn(batchId:String,pos:Vector3D, maxlife:uint = 1000,scale1:Number = 0, scale2:Number = 50):void
+		public function respawn(batchId:String,pos:Vector3D, pspeed:Vector3D, maxlife:uint = 1000,scale1:Number = 0, scale2:Number = 50,size:Number = 0):void
 		{
-			id = batchId;
+			textureId = batchId;
+			sizeX = sizeY = size;
 			life = 0;
+			speed = pspeed;
 			stepCounter = 0;
 			lifeMax = maxlife;
 			move(pos.x,pos.y,pos.z);
@@ -92,11 +95,6 @@ package Evocati.particle
 			startSize = scale1;
 			endSize = scale2;
 			active = true;
-		}
-		
-		public function collect():void
-		{
-			
 		}
 	}
 }

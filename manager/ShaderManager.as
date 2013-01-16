@@ -76,6 +76,28 @@ package Evocati.manager
 				// 传递顶点颜色数据给像素着色器
 				"mov v2, va2\n";
 			
+			_vertexShaderList["PARTICLE_BATCH"] = 
+				//归一化
+				"div vt0, va0, vc5\n" +
+				//移动位置x = vx*t y = vy*t - g*t^2 z =vy*t
+				"mul vt1.xyz, va3.xyz, va4.xxx\n" +
+				"mov vt1.w, va4.x\n" +
+				"mul vt1.w, vt1.w, vt1.w\n" +
+				"mul vt1.w, vt1.w, vc7.x\n" +
+				"div vt1.y, vt1.y, vt1.w\n" +
+				"add vt0.xyz, vt0.xyz, vt0.xyz\n" +
+				// 设置空间位置和旋转和缩放  
+				"m44 op, vt0, vc0\n" +
+				// 传递mesh顶点坐标给像素着色器
+				"mov v0, vt0\n" +
+				// 传递纹理坐标给像素着色器
+				"div vt2.xyzw, va1.xyzw, vc6.xyzw\n" +
+				"mov v1, vt2\n" +
+				// 传递顶点颜色数据给像素着色器
+				"mov v2, va2\n" +
+				// 传递消隐数据给像素着色器
+				"mov v4, va4\n";
+			
 			/**像素着色器*/
 			
 			_pixelShaderList["COMMON"] =

@@ -3,7 +3,6 @@ package Evocati.manager
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.geom.Matrix3D;
-	import flash.geom.Point;
 	import flash.geom.Vector3D;
 
 	public class RegisterManager
@@ -24,6 +23,9 @@ package Evocati.manager
 		 */
 		private var textureSize:Vector.<Number>;
 		
+		//顶点常量寄存器
+		//
+		//------------------------------------------------------------------
 		/**
 		 * 动态改变缩放(着色器控制)
 		 */
@@ -50,7 +52,6 @@ package Evocati.manager
 			uvOffset = Vector.<Number>([US,VS,U,V]);
 			context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX,4,uvOffset);		
 		}
-		
 		/**
 		 * 设置场景大小到GPU寄存器
 		 */
@@ -67,6 +68,19 @@ package Evocati.manager
 			textureSize = Vector.<Number>([size,size,size,size]);
 			context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX,6,textureSize);		
 		}	
+		
+		/**
+		 * 粒子预设参数
+		 */
+		public function setParticleParam(gravity:Number):void
+		{
+			var value:Vector.<Number> = Vector.<Number>([gravity,0,0,0]);   //重力
+			context3D.setProgramConstantsFromVector(Context3DProgramType.VERTEX,7,value);	
+		}
+		
+		//像素常量寄存器
+		//
+		//------------------------------------------------------------------
 		/**
 		 * 径向模糊矩阵
 		 */

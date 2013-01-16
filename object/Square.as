@@ -1,6 +1,8 @@
 package Evocati.object
 {
 	import flash.geom.Vector3D;
+	
+	import Evocati.particle.BaseParticle;
 
 	public class Square
 	{
@@ -135,18 +137,18 @@ package Evocati.object
 		public static function addSquareVertexPixel(vector:Vector.<Number>,obj:BaseObjInfo):void
 		{
 			var index:int = vector.length;
-			var xoffset:int;
-			var yoffset:int;
+			var xoffset:Number;
+			var yoffset:Number;
 			if(obj.textureCoordinates)
 			{
 				xoffset = obj.textureCoordinates[obj.textureIndex].xOffset
 				yoffset = obj.textureCoordinates[obj.textureIndex].yOffset
 			}
-			var texWidth:int = obj.sizeX
-			var texHeight:int = obj.sizeY
-			var px:int = obj.x;
-			var py:int = obj.y;
-			var pz:int = obj.z;
+			var texWidth:Number = obj.sizeX
+			var texHeight:Number = obj.sizeY
+			var px:Number = obj.x;
+			var py:Number = obj.y;
+			var pz:Number = obj.z;
 			/**p1*/
 			//pos
 			vector[index++] = px;
@@ -202,6 +204,109 @@ package Evocati.object
 			vector[index++] = 1;
 			vector[index++] = 1;
 			vector[index++] = 1;
+			
+		}
+		/** 
+		 * 批处理一个粒子的顶点数组(像素数据,Shader做归一化运算,略微提高性能)
+		 * */
+		public static function addParticleVertexPixel(vector:Vector.<Number>,obj:BaseParticle):void
+		{
+			var index:int = vector.length;
+			var xoffset:Number;
+			var yoffset:Number;
+			if(obj.textureCoordinates)
+			{
+				xoffset = obj.textureCoordinates[obj.textureIndex].xOffset
+				yoffset = obj.textureCoordinates[obj.textureIndex].yOffset
+			}
+			var texWidth:Number = obj.sizeX
+			var texHeight:Number = obj.sizeY
+			var px:Number = obj.x;
+			var py:Number = obj.y;
+			var pz:Number = obj.z;
+			/**p1*/
+			//pos
+			vector[index++] = px;
+			vector[index++] = py;
+			vector[index++] = pz;
+			//uv
+			vector[index++] = xoffset;
+			vector[index++] = yoffset;
+			//color
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			//speed
+			vector[index++] = obj.speed.x;
+			vector[index++] = obj.speed.y;
+			vector[index++] = obj.speed.z;
+			//life
+			vector[index++] = obj.life;
+			vector[index++] = obj.lifeScale[2];
+			
+			/**p2*/
+			//pos
+			vector[index++] = texWidth+px;
+			vector[index++] = py;
+			vector[index++] = pz;
+			//uv
+			vector[index++] = xoffset + texWidth;
+			vector[index++] = yoffset;
+			//color
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			//speed
+			vector[index++] = obj.speed.x;
+			vector[index++] = obj.speed.y;
+			vector[index++] = obj.speed.z;
+			//life
+			vector[index++] = obj.life;
+			vector[index++] = obj.lifeScale[2];
+			
+			/**p3*/
+			//pos
+			vector[index++] = texWidth + px;
+			vector[index++] = -texHeight + py;
+			vector[index++] = pz;
+			//uv
+			vector[index++] = xoffset+ texWidth;
+			vector[index++] = yoffset+ texHeight;
+			//color
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			//speed
+			vector[index++] = obj.speed.x;
+			vector[index++] = obj.speed.y;
+			vector[index++] = obj.speed.z;
+			//life
+			vector[index++] = obj.life;
+			vector[index++] = obj.lifeScale[2];
+			
+			/**p4*/
+			//pos
+			vector[index++] = px;
+			vector[index++] = -texHeight+py;
+			vector[index++] = pz;
+			//uv
+			vector[index++] = xoffset;
+			vector[index++] = yoffset + texHeight;
+			//color
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			vector[index++] = 1;
+			//speed
+			vector[index++] = obj.speed.x;
+			vector[index++] = obj.speed.y;
+			vector[index++] = obj.speed.z;
+			//life
+			vector[index++] = obj.life;
+			vector[index++] = obj.lifeScale[2];
 			
 		}
 		

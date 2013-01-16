@@ -23,6 +23,8 @@ package Evocati
 	import Evocati.manager.TransformManager;
 	import Evocati.object.BaseObjInfo;
 	import Evocati.object.GroupObjInfo;
+	import Evocati.particle.BaseParticle;
+	import Evocati.particle.ParticleSystem;
 	import Evocati.scene.BaseScene3D;
 	import Evocati.textureUtils.TexturePacker;
 	import Evocati.tool.StatisticsTool;
@@ -46,6 +48,7 @@ package Evocati
 		private var renderManager:RenderManager;
 		private var textureManager:TextureManager;
 		private var transformManager:TransformManager;
+		private var particleSystem:ParticleSystem;
 		/**
 		 * 统计工具
 		 */
@@ -67,6 +70,7 @@ package Evocati
 		 * 帧计数
 		 */
 		private var _frame:int;
+		private var _lastTime:uint;
 		
 		public function GraphicsEngine(stage:Stage)
 		{
@@ -221,6 +225,14 @@ package Evocati
 		}
 		
 		/**
+		 * 增加粒子
+		 */
+		public function addBatchParticle(batchId:String,life:int,size:int):void
+		{
+			particleSystem.addParticle(batchId,new Vector3D(),new Vector3D(0.01,0.01,0.01),life,size);
+		}
+		
+		/**
 		 * 移动场景中的单个矩形(着色器操作,实际像素数据)
 		 */
 		public function moveSquare(id:String,x:Number,y:Number):void
@@ -290,6 +302,9 @@ package Evocati
 			renderManager = new RenderManager(context3D);
 			textureManager = new TextureManager(context3D,commonData);
 			transformManager = new TransformManager(commonData);
+			particleSystem = new ParticleSystem();
+			
+			particleSystem.generatePoolObjs();
 			
 			configEngine();
 			
@@ -305,6 +320,8 @@ package Evocati
 			shaderManager.setShaders("POST_COMMON","POST_BLUR_HORIZONTAL+POST_BLUR_P2");
 			shaderManager.setShaders("POST_COMMON","POST_BLOOM");
 			shaderManager.setShaders("COMMON","COMMON_DXT5");
+			shaderManager.setShaders("BATCH","COMMON_DXT5");
+			shaderManager.setShaders("PARTICLE_BATCH","COMMON_DXT5");
 			
 			renderManager.initCommonMeshData();
 			
@@ -330,6 +347,7 @@ package Evocati
 				_scene = new BaseScene3D();
 			
 			renderManager.setScene(_scene);
+			renderManager.setParticleSystem(particleSystem);
 			textureManager.setScene(_scene);
 			textureManager.initTexture();
 			
@@ -401,11 +419,23 @@ package Evocati
 			renderManager.batchDraw();
 		}
 		/**
+		 * 画当前批量缓存中的多边形(粒子)
+		 */
+		protected function batchDrawParticle():void
+		{
+			registerManager.setTransformMatrixToRegister(transformManager.modelViewProjection);
+			renderManager.batchDrawParticle();
+		}
+		/**
 		 * 渲染当前帧
 		 */
 		protected function render(event:Event):void
 		{
 			renderManager.polyNum = 0;
+			var now:uint = getTimer();
+			var dTime:uint = now - _lastTime;
+			if(_frame == 0) dTime = 0;
+			_lastTime = now;
 			if(mainConfig.usePostFx)
 			{
 				context3D.setRenderToTexture(textureManager.sceneTexture);
@@ -442,8 +472,8 @@ package Evocati
 			}
 			
 			renderManager.setBlendmode(1);
-			context3D.setProgram ( shaderManager.getShaders('BATCH','COMMON'));
-
+			
+			context3D.setProgram ( shaderManager.getShaders('BATCH','COMMON_DXT5'));
 			//渲染批量对象
 			registerManager.setTextureSizeToRegister(commonData.batchTextureSize);
 			registerManager.setGameSizeToRegister(commonData.gameWidth,commonData.gameHeight);
@@ -453,12 +483,23 @@ package Evocati
 				if(renderManager.setBatchData(batchId))   
 				{
 					textureManager.setTexture(batchId,0);
-					registerManager.setUVToRegister(1,1,0,0);
 					transformManager.setTransform(0,0,0,0,0,0,1,1);
 					batchDraw();
 				}
 			}
 			batchUploadTime = getTimer() - time;
+			
+			//渲染粒子
+			context3D.setProgram ( shaderManager.getShaders("PARTICLE_BATCH","COMMON_DXT5"));
+			for(var id:String in particleSystem._particleBatchList)
+			{
+				particleSystem.update(id,dTime);
+				renderManager.setBatchParticleData(id);
+				registerManager.setParticleParam(0);
+				textureManager.setTexture(id,0);
+				transformManager.setTransform(0,0,0,0,0,0,1,1);
+				batchDrawParticle();
+			}
 			
 			//渲染单个矩形
 			context3D.setProgram ( shaderManager.getShaders("COMMON","COMMON_DXT5"));
@@ -481,6 +522,7 @@ package Evocati
 				);
 				draw();
 			}
+			
 			//后处理效果
 			if(mainConfig.usePostFx)		
 			{
