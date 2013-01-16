@@ -77,15 +77,16 @@ package Evocati.manager
 				"mov v2, va2\n";
 			
 			_vertexShaderList["PARTICLE_BATCH"] = 
-				//归一化
-				"div vt0, va0, vc5\n" +
+				"mov vt0, va0\n" +
 				//移动位置x = vx*t y = vy*t - g*t^2 z =vy*t
-				"mul vt1.xyz, va3.xyz, va4.xxx\n" +
-				"mov vt1.w, va4.x\n" +
-				"mul vt1.w, vt1.w, vt1.w\n" +
-				"mul vt1.w, vt1.w, vc7.x\n" +
-				"div vt1.y, vt1.y, vt1.w\n" +
-				"add vt0.xyz, vt0.xyz, vt0.xyz\n" +
+				"mul vt1.xyz, va3.xyz, va4.x\n" +
+//				"mov vt1.w, va4.x\n" +
+//				"mul vt1.w, vt1.w, vt1.w\n" +
+//				"mul vt1.w, vt1.w, vc7.x\n" +
+//				"div vt1.y, vt1.y, vt1.w\n" +
+				"add vt0.xyz, vt0.xyz, vt1.xyz\n" +
+				//归一化
+				"div vt0, vt0, vc5\n" +
 				// 设置空间位置和旋转和缩放  
 				"m44 op, vt0, vc0\n" +
 				// 传递mesh顶点坐标给像素着色器

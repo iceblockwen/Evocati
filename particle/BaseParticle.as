@@ -7,8 +7,8 @@ package Evocati.particle
 	public class BaseParticle extends BaseObjInfo
 	{
 		public var active:Boolean = true;
-		public var life:uint = 0;
-		public var lifeMax:uint = 1000;
+		public var life:Number = 0;
+		public var lifeMax:Number = 1000;
 		public var stepCounter:uint = 0;
 		public var speed:Vector3D = new Vector3D();
 		
@@ -45,7 +45,7 @@ package Evocati.particle
 			return retval;
 		}
 		
-		public function step(ms:uint):void
+		public function step(ms:Number):void
 		{
 			stepCounter++;
 			life += ms;
@@ -75,7 +75,7 @@ package Evocati.particle
 			rgbaScale[3] = lifeScale[2];
 		}
 		
-		public function respawn(batchId:String,pos:Vector3D, pspeed:Vector3D, maxlife:uint = 1000,scale1:Number = 0, scale2:Number = 50,size:Number = 0):void
+		public function respawn(batchId:String,pos:Vector3D, pspeed:Vector3D, maxlife:Number = 1000,scale1:Number = 0, scale2:Number = 50,size:Number = 0):void
 		{
 			textureId = batchId;
 			sizeX = sizeY = size;

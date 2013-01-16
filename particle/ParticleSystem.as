@@ -31,7 +31,7 @@ package Evocati.particle
 				_particlePool.push(new BaseParticle("0","0",256,256,0,0,0));
 			}
 		}
-		public function addParticle(batchId:String,pos:Vector3D,speed:Vector3D,maxLife:int,size:int):void
+		public function addParticle(batchId:String,pos:Vector3D,speed:Vector3D,maxLife:Number,size:int):void
 		{
 			var particle:BaseParticle;
 			particle = _particlePool.shift();

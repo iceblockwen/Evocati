@@ -227,9 +227,9 @@ package Evocati
 		/**
 		 * 增加粒子
 		 */
-		public function addBatchParticle(batchId:String,life:int,size:int):void
+		public function addBatchParticle(batchId:String,life:Number,size:int):void
 		{
-			particleSystem.addParticle(batchId,new Vector3D(),new Vector3D(0.01,0.01,0.01),life,size);
+			particleSystem.addParticle(batchId,new Vector3D(),new Vector3D(-0.05,0.5,0),life,size);
 		}
 		
 		/**
