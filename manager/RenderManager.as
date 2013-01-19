@@ -5,6 +5,7 @@ package Evocati.manager
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
+	import flash.utils.getTimer;
 	
 	import Evocati.object.BaseObjInfo;
 	import Evocati.object.Square;
@@ -166,17 +167,19 @@ package Evocati.manager
 		 */
 		public function setBatchData(batchId:String):Boolean
 		{			
-			batchMeshIndexData = Vector.<uint>([]);
-			batchMeshVertexData = Vector.<Number>([]);
-			
 			var arr:Array = scene._batchObjList[batchId];
 			batchNum = arr.length;
 			if(batchNum <= 0) return true;
-			for (var i:int = 0;i<batchNum;i++)
+			
+			batchMeshIndexData = Vector.<uint>(batchNum*6);
+			batchMeshVertexData = Vector.<Number>(batchNum*36);
+			
+			var i:int = -1;
+			while (++i < batchNum)
 			{
 				var obj:BaseObjInfo = arr[i] as BaseObjInfo;
 				Square.addSquareIndexByNumber(batchMeshIndexData,i);
-				Square.addSquareVertexPixel(batchMeshVertexData,obj);
+				Square.addSquareVertexPixel(batchMeshVertexData,obj,i);
 				//				Square.addSquareVertex(
 				//					batchMeshVertexData,
 				//					obj.sizeX*2/_gameWidth,
@@ -203,17 +206,20 @@ package Evocati.manager
 		 * 上传批量粒子数据给GPU
 		 */
 		public function setBatchParticleData(batchId:String):Boolean
-		{			
-			batchMeshIndexData = Vector.<uint>([]);
-			batchMeshVertexData = Vector.<Number>([]);
+		{		
 			var arr:Array = particleSystem._particleBatchList[batchId];
 			var len:int = arr.length;
 			if(len <= 0) return true;
-			for (var i:int = 0;i<len;i++)
+			
+			batchMeshIndexData = new Vector.<uint>(len*6);
+			batchMeshVertexData = new Vector.<Number>(len*56);
+			
+			var i:int = -1;
+			while (++i < len)
 			{
 				var obj:BaseParticle = arr[i] as BaseParticle;
 				Square.addSquareIndexByNumber(batchMeshIndexData,i);
-				Square.addParticleVertexPixel(batchMeshVertexData,obj);
+				Square.addParticleVertexPixel(batchMeshVertexData,obj,i);
 			}			
 			if(batchMeshVertexData.length == 0) return false;
 			
@@ -221,11 +227,13 @@ package Evocati.manager
 				batchIndexBuffer.dispose();
 			if(batchVertexBuffer)
 				batchVertexBuffer.dispose();
+			
 			batchIndexBuffer = context3D.createIndexBuffer(batchMeshIndexData.length);
 			batchIndexBuffer.uploadFromVector(batchMeshIndexData,0,batchMeshIndexData.length);
 			
 			batchVertexBuffer = context3D.createVertexBuffer(batchMeshVertexData.length/14, 14); 
 			batchVertexBuffer.uploadFromVector(batchMeshVertexData, 0, batchMeshVertexData.length/14);
+			
 			return true;
 		}
 		

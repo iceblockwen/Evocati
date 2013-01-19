@@ -1,7 +1,5 @@
 package Evocati.object
 {
-	import flash.geom.Vector3D;
-	
 	import Evocati.particle.BaseParticle;
 
 	public class Square
@@ -57,7 +55,7 @@ package Evocati.object
 		
 		public static function addSquareIndexByNumber(vector:Vector.<uint>, n:int):void
 		{
-			var index:int = vector.length;
+			var index:int = n*6;
 			vector[index++] = 0+4*n;
 			vector[index++] = 2+4*n;
 			vector[index++] = 3+4*n;
@@ -66,77 +64,77 @@ package Evocati.object
 			vector[index++] = 2+4*n;
 		}
 		
-		/** 
-		 * 批处理一个矩形的顶点数组(归一化数据)
-		 * */
-		public static function addSquareVertex(vector:Vector.<Number>,nSizeX:Number,nSizeY:Number,nTransform:Vector3D,nUVoffset:Vector3D):void
-		{
-			var index:int = vector.length;
-			
-			/**p1*/
-			//pos
-			vector[index++] = nTransform.x;
-			vector[index++] = nTransform.y;
-			vector[index++] = nTransform.z;
-			//uv
-			vector[index++] = nUVoffset.x;
-			vector[index++] = nUVoffset.y;
-			//color
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-			
-			/**p2*/
-			//pos
-			vector[index++] = nSizeX+nTransform.x;
-			vector[index++] = nTransform.y;
-			vector[index++] = nTransform.z;
-			//uv
-			vector[index++] = nUVoffset.x + nUVoffset.z;
-			vector[index++] = nUVoffset.y;
-			//color
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-			
-			/**p3*/
-			//pos
-			vector[index++] = nSizeX+nTransform.x;
-			vector[index++] = -nSizeY+nTransform.y;
-			vector[index++] = nTransform.z;
-			//uv
-			vector[index++] = nUVoffset.x+ nUVoffset.z;
-			vector[index++] = nUVoffset.y+ nUVoffset.w;
-			//color
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-			
-			/**p4*/
-			//pos
-			vector[index++] = nTransform.x;
-			vector[index++] = -nSizeY+nTransform.y;
-			vector[index++] = nTransform.z;
-			//uv
-			vector[index++] = nUVoffset.x;
-			vector[index++] = nUVoffset.y + nUVoffset.w;
-			//color
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-			vector[index++] = 1;
-
-		}
+//		/** 
+//		 * 批处理一个矩形的顶点数组(归一化数据)
+//		 * */
+//		public static function addSquareVertex(vector:Vector.<Number>,nSizeX:Number,nSizeY:Number,nTransform:Vector3D,nUVoffset:Vector3D):void
+//		{
+//			var index:int = vector.length;
+//			
+//			/**p1*/
+//			//pos
+//			vector[index++] = nTransform.x;
+//			vector[index++] = nTransform.y;
+//			vector[index++] = nTransform.z;
+//			//uv
+//			vector[index++] = nUVoffset.x;
+//			vector[index++] = nUVoffset.y;
+//			//color
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			
+//			/**p2*/
+//			//pos
+//			vector[index++] = nSizeX+nTransform.x;
+//			vector[index++] = nTransform.y;
+//			vector[index++] = nTransform.z;
+//			//uv
+//			vector[index++] = nUVoffset.x + nUVoffset.z;
+//			vector[index++] = nUVoffset.y;
+//			//color
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			
+//			/**p3*/
+//			//pos
+//			vector[index++] = nSizeX+nTransform.x;
+//			vector[index++] = -nSizeY+nTransform.y;
+//			vector[index++] = nTransform.z;
+//			//uv
+//			vector[index++] = nUVoffset.x+ nUVoffset.z;
+//			vector[index++] = nUVoffset.y+ nUVoffset.w;
+//			//color
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			
+//			/**p4*/
+//			//pos
+//			vector[index++] = nTransform.x;
+//			vector[index++] = -nSizeY+nTransform.y;
+//			vector[index++] = nTransform.z;
+//			//uv
+//			vector[index++] = nUVoffset.x;
+//			vector[index++] = nUVoffset.y + nUVoffset.w;
+//			//color
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//			vector[index++] = 1;
+//
+//		}
 		
 		/** 
 		 * 批处理一个矩形的顶点数组(像素数据,Shader做归一化运算,略微提高性能)
 		 * */
-		public static function addSquareVertexPixel(vector:Vector.<Number>,obj:BaseObjInfo):void
+		public static function addSquareVertexPixel(vector:Vector.<Number>,obj:BaseObjInfo,n:int):void
 		{
-			var index:int = vector.length;
+			var index:int = n*36;
 			var xoffset:Number;
 			var yoffset:Number;
 			if(obj.textureCoordinates)
@@ -209,9 +207,9 @@ package Evocati.object
 		/** 
 		 * 批处理一个粒子的顶点数组(像素数据,Shader做归一化运算,略微提高性能)
 		 * */
-		public static function addParticleVertexPixel(vector:Vector.<Number>,obj:BaseParticle):void
+		public static function addParticleVertexPixel(vector:Vector.<Number>,obj:BaseParticle,n:int):void
 		{
-			var index:int = vector.length;
+			var index:int = n*56;
 			var xoffset:Number;
 			var yoffset:Number;
 			if(obj.textureCoordinates)
@@ -307,7 +305,6 @@ package Evocati.object
 			//life
 			vector[index++] = obj.life;
 			vector[index++] = obj.lifeScale[2];
-			
 		}
 		
 	}
