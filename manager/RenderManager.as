@@ -244,6 +244,8 @@ package Evocati.manager
 		 */
 		public function setLinkParticleData(data:ParticleLink):Boolean
 		{		
+			if(data.nodeNum < 2)
+				return false;
 			var arr:Array = MeshGenerate.generateVertexLink(data.vertexArray,data.nodeNum);
 			batchMeshIndexData = arr[0];
 			batchMeshVertexData = arr[1];

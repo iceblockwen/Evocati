@@ -21,7 +21,7 @@ package Evocati.manager
 		public var vramUse:int;
 		
 		/**
-		 * 纹理列表
+		 * 纹理列表[tex,size,vram]
 		 */
 		private var _textureList:Dictionary;
 		
@@ -208,6 +208,11 @@ package Evocati.manager
 				context3D.setTextureAt(index, _textureList[id][0]);
 				context3D.setTextureAt(1, null);
 			}
+		}
+		
+		public function getTextureSize(id:String):Number
+		{
+			return _textureList[id][1];
 		}
 	}
 }

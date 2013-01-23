@@ -12,16 +12,22 @@ package Evocati.particle
 		public var nodeNum:int;
 		
 		public var vertexArray:Array;
+		private var _timeAdd:Number = 0;
 		public function ParticleLink()
 		{
 			vertexArray = [];
 		}
 		public function step(time:Number):void
 		{
-			getTwoVectex();
-			for each(var arr:Array in vertexArray)
+			_timeAdd += time;
+			if(_timeAdd>1)
 			{
-				arr[3] += time; 
+				getTwoVectex();
+				for each(var arr:Array in vertexArray)
+				{
+					arr[3] += time; 
+				}
+				_timeAdd = 0;
 			}
 		}
 		

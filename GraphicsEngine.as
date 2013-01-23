@@ -233,6 +233,14 @@ package Evocati
 		}
 		
 		/**
+		 * 增加粒子链
+		 */
+		public function addParticleLink(texId:String,life:Number,sizeX:int,sizeY:int,texSize:int,position:Vector3D,velocity:Vector3D):ParticleLink
+		{
+			return particleSystem.addParticleLink(texId,position,velocity,life,sizeX,sizeY,texSize);
+		}
+		
+		/**
 		 * 移动场景中的单个矩形(着色器操作,实际像素数据)
 		 */
 		public function moveSquare(id:String,x:Number,y:Number):void
@@ -505,8 +513,8 @@ package Evocati
 			{
 				if(renderManager.setBatchParticleData(id))
 				{
-					registerManager.setTextureSizeToRegister(32);
-					registerManager.setParticleParam(100);
+					registerManager.setTextureSizeToRegister(textureManager.getTextureSize(id));
+					registerManager.setParticleParam(0);
 					textureManager.setTexture(id,0);
 					transformManager.setTransform(0,0,0,0,0,0,1,1);
 					batchDrawParticle();
@@ -514,10 +522,11 @@ package Evocati
 			}
 			for each(var link:ParticleLink in particleSystem._particleLinkList)
 			{
-				if(renderManager.setBatchParticleData(id))
+				if(renderManager.setLinkParticleData(link))
 				{
-					registerManager.setTextureSizeToRegister(32);
-					registerManager.setParticleParam(100);
+					id = link.texId;
+					registerManager.setTextureSizeToRegister(textureManager.getTextureSize(id));
+					registerManager.setParticleParam(0);
 					textureManager.setTexture(id,0);
 					transformManager.setTransform(0,0,0,0,0,0,1,1);
 					batchDrawParticle();
