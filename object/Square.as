@@ -207,25 +207,39 @@ package Evocati.object
 		/** 
 		 * 批处理一个粒子的顶点数组(像素数据,Shader做归一化运算,略微提高性能)
 		 * */
-		public static function addParticleVertexPixel(vector:Vector.<Number>,obj:BaseParticle,n:int):void
+		public static function addParticleVertexPixel(vector:Vector.<Number>,obj:BaseParticle,n:int,textureAlt:Boolean = false):void
 		{
 			var index:int = n*56;
-			var xoffset:Number;
-			var yoffset:Number;
+			var xoffset:Number = 0;
+			var yoffset:Number = 0;
 			if(obj.textureCoordinates)
 			{
 				xoffset = obj.textureCoordinates[obj.textureIndex].xOffset
 				yoffset = obj.textureCoordinates[obj.textureIndex].yOffset
 			}
-			var texWidth:Number = obj.sizeX
-			var texHeight:Number = obj.sizeY
+			var texWidth:Number = 0;
+			var texHeight:Number = 0;
+			var sizeWidth:Number = 0;
+			var sizeHeight:Number = 0;
+			sizeWidth  = obj.sizeX * obj.scaleX/2;
+			sizeHeight  = obj.sizeY * obj.scaleY/2;
+			if(textureAlt)
+			{
+				texWidth = sizeWidth*2;
+				texHeight = sizeHeight*2;
+			}
+			else
+			{
+				texWidth = obj.textureCoordinates[obj.textureIndex].texSize;
+				texHeight = texWidth;
+			}
 			var px:Number = obj.x;
 			var py:Number = obj.y;
 			var pz:Number = obj.z;
 			/**p1*/
 			//pos
-			vector[index++] = px;
-			vector[index++] = py;
+			vector[index++] = px - sizeWidth;
+			vector[index++] = py + sizeHeight;
 			vector[index++] = pz;
 			//uv
 			vector[index++] = xoffset;
@@ -236,17 +250,17 @@ package Evocati.object
 			vector[index++] = 1;
 			vector[index++] = 1;
 			//speed
-			vector[index++] = obj.speed.x;
-			vector[index++] = obj.speed.y;
-			vector[index++] = obj.speed.z;
+			vector[index++] = obj.velocity.x;
+			vector[index++] = obj.velocity.y;
+			vector[index++] = obj.velocity.z;
 			//life
 			vector[index++] = obj.life;
-			vector[index++] = obj.lifeScale[2];
+			vector[index++] = obj.lifeScale[0];
 			
 			/**p2*/
 			//pos
-			vector[index++] = texWidth+px;
-			vector[index++] = py;
+			vector[index++] = px + sizeWidth;
+			vector[index++] = py + sizeHeight;
 			vector[index++] = pz;
 			//uv
 			vector[index++] = xoffset + texWidth;
@@ -257,17 +271,17 @@ package Evocati.object
 			vector[index++] = 1;
 			vector[index++] = 1;
 			//speed
-			vector[index++] = obj.speed.x;
-			vector[index++] = obj.speed.y;
-			vector[index++] = obj.speed.z;
+			vector[index++] = obj.velocity.x;
+			vector[index++] = obj.velocity.y;
+			vector[index++] = obj.velocity.z;
 			//life
 			vector[index++] = obj.life;
-			vector[index++] = obj.lifeScale[2];
+			vector[index++] = obj.lifeScale[0];
 			
 			/**p3*/
 			//pos
-			vector[index++] = texWidth + px;
-			vector[index++] = -texHeight + py;
+			vector[index++] = px + sizeWidth;
+			vector[index++] = py - sizeHeight;
 			vector[index++] = pz;
 			//uv
 			vector[index++] = xoffset+ texWidth;
@@ -278,17 +292,17 @@ package Evocati.object
 			vector[index++] = 1;
 			vector[index++] = 1;
 			//speed
-			vector[index++] = obj.speed.x;
-			vector[index++] = obj.speed.y;
-			vector[index++] = obj.speed.z;
+			vector[index++] = obj.velocity.x;
+			vector[index++] = obj.velocity.y;
+			vector[index++] = obj.velocity.z;
 			//life
 			vector[index++] = obj.life;
-			vector[index++] = obj.lifeScale[2];
+			vector[index++] = obj.lifeScale[0];
 			
 			/**p4*/
 			//pos
-			vector[index++] = px;
-			vector[index++] = -texHeight+py;
+			vector[index++] = px - sizeWidth;
+			vector[index++] = py - sizeHeight;
 			vector[index++] = pz;
 			//uv
 			vector[index++] = xoffset;
@@ -299,12 +313,12 @@ package Evocati.object
 			vector[index++] = 1;
 			vector[index++] = 1;
 			//speed
-			vector[index++] = obj.speed.x;
-			vector[index++] = obj.speed.y;
-			vector[index++] = obj.speed.z;
+			vector[index++] = obj.velocity.x;
+			vector[index++] = obj.velocity.y;
+			vector[index++] = obj.velocity.z;
 			//life
 			vector[index++] = obj.life;
-			vector[index++] = obj.lifeScale[2];
+			vector[index++] = obj.lifeScale[0];
 		}
 		
 	}

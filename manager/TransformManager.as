@@ -70,6 +70,11 @@ package Evocati.manager
 			_cameraRotation.setTo(rx,ry,rz);
 		}
 		
+		public function getCameraPos():Vector3D
+		{
+			return _cameraPos;
+		}
+		
 		/**
 		 * 设置摄像机透视矩阵
 		 */

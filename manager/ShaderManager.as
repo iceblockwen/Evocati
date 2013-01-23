@@ -34,7 +34,9 @@ package Evocati.manager
 				// 传递纹理坐标给像素着色器
 				"mov v1, va1\n" +
 				// 传递顶点颜色数据给像素着色器
-				"mov v2, va2\n";
+				"mov v2, va2\n" +
+				"mov v3, va3\n" +
+				"mov v4, va4\n";
 			
 			_vertexShaderList["COMMON"] = 
 				// 设置空间位置和旋转和缩放  
@@ -48,7 +50,9 @@ package Evocati.manager
 				"add vt2.xyzw, vt1.xyzw, vc4.zwzw\n" +
 				"mov v1, vt2\n" +
 				// 传递顶点颜色数据给像素着色器
-				"mov v2, va2\n";
+				"mov v2, va2\n" +
+				"mov v3, va3\n" +
+				"mov v4, va4\n";
 			
 			_vertexShaderList["MAP"] = 
 				// 设置空间位置和旋转和缩放  
@@ -61,7 +65,9 @@ package Evocati.manager
 				"div vt2, vt1, vc6\n" +
 				"mov v1, vt2\n" +
 				// 传递顶点颜色数据给像素着色器
-				"mov v2, va2\n";
+				"mov v2, va2\n" +
+				"mov v3, va3\n" +
+				"mov v4, va4\n";
 			
 			_vertexShaderList["BATCH"] = 
 				//归一化
@@ -74,11 +80,13 @@ package Evocati.manager
 				"div vt1.xyzw, va1.xyzw, vc6.xyzw\n" +
 				"mov v1, vt1\n" +
 				// 传递顶点颜色数据给像素着色器
-				"mov v2, va2\n";
+				"mov v2, va2\n" +
+				"mov v3, va3\n" +
+				"mov v4, va4\n";
 			
 			_vertexShaderList["PARTICLE_BATCH"] = 
 				"mov vt0, va0\n" +
-				//移动位置x = vx*t y = vy*t - g*t^2 z =vy*t
+				//移动位置x = vx*t y = vy*t - g*t^2
 				"mul vt1.xyz, va3.xyz, va4.x\n" +
 				"mov vt1.w, va4.x\n" +
 				"mul vt1.w, vt1.w, vt1.w\n" +
@@ -123,6 +131,11 @@ package Evocati.manager
 			_pixelShaderList["COMMON_DXT5"] =
 				// 采样纹理数据传递给颜色输出
 				"tex ft0, v1, fs0 <2d,nearest,nomip,dxt5>\n"+
+				"mov oc, ft0\n";
+			_pixelShaderList["COMMON_PARTICLE_DXT5"] =
+				// 采样纹理数据传递给颜色输出
+				"tex ft0, v1, fs0 <2d,nearest,nomip,dxt5>\n"+
+				"mul ft0.w, ft0.w, v4.y\n"+
 				"mov oc, ft0\n";
 			_pixelShaderList["COMMON_FOG_DXT5"] =
 				// 采样纹理数据传递给颜色输出

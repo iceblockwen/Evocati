@@ -1,9 +1,8 @@
 package Evocati.object
 {
-	import Evocati.Interface.IObj3D;
-	
 	import flash.geom.Vector3D;
-	import flash.utils.Dictionary;
+	
+	import Evocati.Interface.IObj3D;
 
 	/**
 	 * 场景物件数据(具体像素值数据)

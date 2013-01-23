@@ -11,12 +11,14 @@ package Evocati.particle
 	{
 		private var _poolMaxSize:int;
 		private var _particlePool:Array;
+		private var _particleEmitterList:Array;
 		public var _particleBatchList:Dictionary;
 		
 		private var _scene:BaseScene3D
 		public function ParticleSystem()
 		{
 			_particlePool = [];
+			_particleEmitterList = [];
 			_particleBatchList = new Dictionary();
 		}
 		public function setScene(scene3d:BaseScene3D):void
@@ -31,14 +33,14 @@ package Evocati.particle
 				_particlePool.push(new BaseParticle("0","0",256,256,0,0,0));
 			}
 		}
-		public function addParticle(batchId:String,pos:Vector3D,speed:Vector3D,maxLife:Number,size:int):void
+		public function addParticle(batchId:String,position:Vector3D,velocity:Vector3D,maxLife:Number,sizeX:int,sizeY:int,texSize:int,textureAlter:Boolean = false):void
 		{
 			var particle:BaseParticle;
 			particle = _particlePool.shift();
 			if(!particle)
-				particle = new BaseParticle("0","0",size,size,0,0,0);
-			particle.respawn(batchId,pos,speed,maxLife,0,100,size);
-			particle.textureCoordinates = [new TextureCoodinate(0,0,1,1,new Rectangle(0,0,size,size),size)];
+				particle = new BaseParticle("0","0",sizeX,sizeY,0,0,0);
+			particle.respawn(batchId,position,velocity,maxLife,0,100,sizeX,sizeY,textureAlter);
+			particle.textureCoordinates = [new TextureCoodinate(0,0,1,1,new Rectangle(0,0,texSize,texSize),texSize)];
 			if(batchId == "")
 			{
 				trace("不能为空啊batchId");
@@ -50,17 +52,40 @@ package Evocati.particle
 			_particleBatchList[batchId].push(particle);
 		}
 		
-		public function update(batchId:String,time:uint):void
+		public function addParticleEmitter(batchId:String,position:Vector3D,velocity:Vector3D,maxLife:Number,sizeX:int,sizeY:int,texSize:int):ParticleEmitter
 		{
-			var arr:Array = _particleBatchList[batchId];
-			for each(var i:BaseParticle in arr)
+			var particleEmitter:ParticleEmitter;
+			particleEmitter = new ParticleEmitter(this);
+			particleEmitter.batchId = batchId;
+			particleEmitter.posX = position.x;
+			particleEmitter.posY = position.y;
+			particleEmitter.posZ = position.z;
+			particleEmitter.velocity = velocity;
+			particleEmitter.maxLife = maxLife;
+			particleEmitter.sizeX = sizeX;
+			particleEmitter.sizeY = sizeY;
+			particleEmitter.texSize = texSize;
+			_particleEmitterList.push(particleEmitter);
+			return particleEmitter;
+		}
+		
+		public function update(time:Number):void
+		{
+			for each(var arr:Array in _particleBatchList)
 			{
-				i.step(time);
-				if(i.active == false)
-				{	
-					arr.splice(arr.indexOf(i));
-					_particlePool.push(i);
+				for each(var i:BaseParticle in arr)
+				{
+					i.step(time/1000);
+					if(i.active == false)
+					{	
+						arr.splice(arr.indexOf(i),1);
+						_particlePool.push(i);
+					}
 				}
+			}
+			for each(var j:ParticleEmitter in _particleEmitterList)
+			{
+				j.step(time/1000);
 			}
 		}
 	}

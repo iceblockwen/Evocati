@@ -121,7 +121,7 @@ package Evocati.manager
 				case 3:
 					// just lightens the scene - great for particles
 					context3D.setBlendFactors(
-						Context3DBlendFactor.ONE,
+						Context3DBlendFactor.SOURCE_ALPHA,
 						Context3DBlendFactor.ONE);
 					break;
 				case 4:
@@ -171,8 +171,8 @@ package Evocati.manager
 			batchNum = arr.length;
 			if(batchNum <= 0) return true;
 			
-			batchMeshIndexData = Vector.<uint>(batchNum*6);
-			batchMeshVertexData = Vector.<Number>(batchNum*36);
+			batchMeshIndexData = new Vector.<uint>(batchNum*6);
+			batchMeshVertexData = new Vector.<Number>(batchNum*36);
 			
 			var i:int = -1;
 			while (++i < batchNum)
@@ -209,7 +209,8 @@ package Evocati.manager
 		{		
 			var arr:Array = particleSystem._particleBatchList[batchId];
 			var len:int = arr.length;
-			if(len <= 0) return true;
+			if(len <= 0) 
+				return false;
 			
 			batchMeshIndexData = new Vector.<uint>(len*6);
 			batchMeshVertexData = new Vector.<Number>(len*56);
@@ -221,7 +222,8 @@ package Evocati.manager
 				Square.addSquareIndexByNumber(batchMeshIndexData,i);
 				Square.addParticleVertexPixel(batchMeshVertexData,obj,i);
 			}			
-			if(batchMeshVertexData.length == 0) return false;
+			if(batchMeshVertexData.length == 0) 
+				return false;
 			
 			if(batchIndexBuffer)
 				batchIndexBuffer.dispose();
@@ -248,6 +250,10 @@ package Evocati.manager
 				Context3DVertexBufferFormat.FLOAT_2);
 			context3D.setVertexBufferAt(2, vertexBuffer, 5, 
 				Context3DVertexBufferFormat.FLOAT_4);
+			context3D.setVertexBufferAt(3, batchVertexBuffer, 5,        //不知道为什么在别的地方使用了某个寄存器，shader里就一定要用到该寄存器，否则什么都画不出来
+				Context3DVertexBufferFormat.FLOAT_4);
+			context3D.setVertexBufferAt(4, batchVertexBuffer, 5,
+				Context3DVertexBufferFormat.FLOAT_4);
 
 			context3D.drawTriangles(indexBuffer, 0, meshIndexData.length/3);
 			
@@ -263,6 +269,10 @@ package Evocati.manager
 			context3D.setVertexBufferAt(1, batchVertexBuffer, 3, 
 				Context3DVertexBufferFormat.FLOAT_2);
 			context3D.setVertexBufferAt(2, batchVertexBuffer, 5, 
+				Context3DVertexBufferFormat.FLOAT_4);
+			context3D.setVertexBufferAt(3, batchVertexBuffer, 5, 
+				Context3DVertexBufferFormat.FLOAT_4);
+			context3D.setVertexBufferAt(4, batchVertexBuffer, 5,
 				Context3DVertexBufferFormat.FLOAT_4);
 			
 			context3D.drawTriangles(batchIndexBuffer, 0, batchMeshIndexData.length/3);

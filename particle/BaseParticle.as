@@ -8,14 +8,16 @@ package Evocati.particle
 	{
 		public var active:Boolean = true;
 		public var life:Number = 0;
-		public var lifeMax:Number = 1000;
+		public var lifeMax:Number = 1;
 		public var stepCounter:uint = 0;
-		public var speed:Vector3D = new Vector3D();
+		public var velocity:Vector3D = new Vector3D();
+		public var textureAlter:Boolean;
 		
 		public var lifeScale:Vector.<Number> = new Vector.<Number>([1, 0, 1, 1]);
 		public var rgbaScale:Vector.<Number> = new Vector.<Number>([1, 1, 1, 1]);
 		private var startSize:Number = 0;
 		private var endSize:Number = 1;
+		
 		
 		private static var twoPi:Number = 2*Math.PI;
 		
@@ -31,27 +33,27 @@ package Evocati.particle
 		}
 		
 		// returns a float from -amp to +amp in wobbles per second
-		private static function wobble(ms:Number = 0, amp:Number = 1, spd:Number = 1):Number
+		private static function wobble(s:Number = 0, amp:Number = 1, spd:Number = 1):Number
 		{
 			var val:Number;
-			val = amp*Math.sin((ms/1000)*spd*twoPi);
+			val = amp*Math.sin((s)*spd*twoPi);
 			return val;
 		}
 		// returns a float that oscillates from 0..1..0 each second
-		private static function wobble010(ms:Number):Number
+		private static function wobble010(s:Number):Number
 		{
 			var retval:Number;
-			retval = wobble(ms-250, 0.5, 1.0) + 0.5;
+			retval = wobble(s-0.25, 0.5, 1.0) + 0.5;
 			return retval;
 		}
 		
-		public function step(ms:Number):void
+		public function step(s:Number):void
 		{
 			stepCounter++;
-			life += ms;
+			life += s;
 			if (life >= lifeMax)
 			{
-				//trace("Particle died (" + life + "ms)");
+//				trace("Particle died (" + life + "s)");
 				active = false;
 				return;
 			}
@@ -73,17 +75,21 @@ package Evocati.particle
 			rgbaScale[1] = lifeScale[0];
 			rgbaScale[2] = lifeScale[0];
 			rgbaScale[3] = lifeScale[2];
+			
+			scaleX = scaleY = lifeScale[0];
 		}
 		
-		public function respawn(batchId:String,pos:Vector3D, pspeed:Vector3D, maxlife:Number = 1000,scale1:Number = 0, scale2:Number = 50,size:Number = 0):void
+		public function respawn(batchId:String,position:Vector3D, pvelocity:Vector3D, maxlife:Number = 1,scale1:Number = 0, scale2:Number = 50,psizeX:Number = 0,psizeY:Number = 0,texAlt:Boolean = false):void
 		{
+			textureAlter = texAlt;
 			textureId = batchId;
-			sizeX = sizeY = size;
+			sizeX = psizeX;
+			sizeY = psizeY;
 			life = 0;
-			speed = pspeed;
+			velocity = pvelocity;
 			stepCounter = 0;
 			lifeMax = maxlife;
-			move(pos.x,pos.y,pos.z);
+			move(position.x,position.y,position.z);
 			lifeScale[0] = 1;
 			lifeScale[1] = 0;
 			lifeScale[2] = 0;

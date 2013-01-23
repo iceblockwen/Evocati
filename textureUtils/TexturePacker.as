@@ -25,19 +25,7 @@ package Evocati.textureUtils
 		
 		public static function getCompatibleSize(size:int):Number
 		{
-			if(size>0 && size<=128)
-				return 128;
-			else if(size>128 && size<=256)
-				return 256;
-			else if(size>256 && size<=512)
-				return 512;
-			else if(size>512 && size<=1024)
-				return 1024;
-			else if(size>1024 && size<=2048)
-				return 2048;
-			else
-				return 1024;
-			return 1024;
+			return nextPowerOfTwo(size);
 		}
 		
 		public static function nextPowerOfTwo(v:uint): uint
