@@ -11,6 +11,7 @@ package Evocati.particle
 		public var posZ:Number;
 		public var velocity:Vector3D;
 		public var maxLife:Number;
+		public var randomSize:int;
 		public var sizeX:int;
 		public var sizeY:int;
 		public var texSize:int;
@@ -39,11 +40,23 @@ package Evocati.particle
 					{
 						if(_manager)
 						{
-							_manager.addParticle(batchId,new Vector3D(posX,posY,posZ),velocity,maxLife,sizeX,sizeY,texSize);
+							var scale:Number = Math.random();
+							scale = scale/2+0.5;
+							_manager.addParticle(batchId,
+								new Vector3D(
+									posX + getRandomOffset(15),
+									posY + getRandomOffset(15),
+									posZ),
+								velocity,maxLife,sizeX*scale,sizeY*scale,texSize);
 						}
 					}
 				}
 			}
+		}
+		
+		private function getRandomOffset(value:int):int
+		{
+			return ((Math.random()*2)-1)*value;
 		}
 		
 		public function move(x:Number,y:Number,z:Number):void

@@ -24,6 +24,7 @@ package Evocati
 	import Evocati.object.BaseObjInfo;
 	import Evocati.object.GroupObjInfo;
 	import Evocati.particle.ParticleEmitter;
+	import Evocati.particle.ParticleLink;
 	import Evocati.particle.ParticleSystem;
 	import Evocati.scene.BaseScene3D;
 	import Evocati.textureUtils.TexturePacker;
@@ -505,7 +506,18 @@ package Evocati
 				if(renderManager.setBatchParticleData(id))
 				{
 					registerManager.setTextureSizeToRegister(32);
-					registerManager.setParticleParam(0);
+					registerManager.setParticleParam(100);
+					textureManager.setTexture(id,0);
+					transformManager.setTransform(0,0,0,0,0,0,1,1);
+					batchDrawParticle();
+				}
+			}
+			for each(var link:ParticleLink in particleSystem._particleLinkList)
+			{
+				if(renderManager.setBatchParticleData(id))
+				{
+					registerManager.setTextureSizeToRegister(32);
+					registerManager.setParticleParam(100);
 					textureManager.setTexture(id,0);
 					transformManager.setTransform(0,0,0,0,0,0,1,1);
 					batchDrawParticle();
@@ -565,7 +577,6 @@ package Evocati
 				renderManager.wholeScreenDraw()
 				if(gaussian)
 				{
-					registerManager.setGaussianBlurParam(commonData.blurTextureSize);
 					gaussianBlur(gaussianTimes);
 					bloom();
 				}
@@ -601,6 +612,8 @@ package Evocati
 		{
 			var t:int = times;
 			t--;
+			var ratio:Number = commonData.gameWidth/commonData.gameHeight;
+			registerManager.setGaussianBlurParam(commonData.blurTextureSize,ratio);
 			context3D.setTextureAt(0, textureManager.blurTexture);
 			context3D.setTextureAt(1, null);
 			context3D.setRenderToTexture(textureManager.blurTextureSec);
@@ -609,6 +622,7 @@ package Evocati
 			renderManager.wholeScreenDraw(false);
 			while(t--)
 			{
+				registerManager.setGaussianBlurParam(commonData.blurTextureSize,1);
 				context3D.setTextureAt(0, textureManager.blurTextureSec);
 				context3D.setTextureAt(1, null);
 				context3D.setRenderToTexture(textureManager.blurTexture);
@@ -616,6 +630,7 @@ package Evocati
 				context3D.clear(0,0,0);
 				renderManager.wholeScreenDraw(false);
 				
+				registerManager.setGaussianBlurParam(commonData.blurTextureSize,ratio);
 				context3D.setTextureAt(0, textureManager.blurTexture);
 				context3D.setTextureAt(1, null);
 				context3D.setRenderToTexture(textureManager.blurTextureSec);
@@ -623,6 +638,7 @@ package Evocati
 				context3D.clear(0,0,0);
 				renderManager.wholeScreenDraw(false);
 			}
+			registerManager.setGaussianBlurParam(commonData.blurTextureSize,1);
 			context3D.setTextureAt(0, textureManager.blurTextureSec);
 			context3D.setTextureAt(1, null);
 			context3D.setRenderToTexture(textureManager.blurTexture);

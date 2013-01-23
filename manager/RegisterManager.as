@@ -107,9 +107,9 @@ package Evocati.manager
 		/**
 		 * 高斯模糊预设参数
 		 */
-		public function setGaussianBlurParam(texSize:Number):void
+		public function setGaussianBlurParam(texSize:Number,ratio:Number):void
 		{
-			var value:Vector.<Number> = Vector.<Number>([1/texSize,0,0,0.16]);   //像素偏移单位. . 高斯参数0
+			var value:Vector.<Number> = Vector.<Number>([1/texSize*ratio,0,0,0.16]);   //像素偏移单位. . 高斯参数0
 			context3D.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT,0,value);	
 			
 			var value2:Vector.<Number> = Vector.<Number>([0.05,0.09,0.12,0.15]);   //高斯参数4 3 2 1

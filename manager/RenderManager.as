@@ -5,11 +5,11 @@ package Evocati.manager
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
-	import flash.utils.getTimer;
 	
 	import Evocati.object.BaseObjInfo;
-	import Evocati.object.Square;
+	import Evocati.object.MeshGenerate;
 	import Evocati.particle.BaseParticle;
+	import Evocati.particle.ParticleLink;
 	import Evocati.particle.ParticleSystem;
 	import Evocati.scene.BaseScene3D;
 
@@ -137,8 +137,8 @@ package Evocati.manager
 		 */
 		protected function setSingleData():void
 		{
-			meshIndexData = Square.getSquareIndex();
-			meshVertexData = Square.getNormalizedSquareVertex(1.0,1.0);			
+			meshIndexData = MeshGenerate.getSquareIndex();
+			meshVertexData = MeshGenerate.getNormalizedSquareVertex(1.0,1.0);			
 			
 			indexBuffer = context3D.createIndexBuffer(meshIndexData.length);
 			indexBuffer.uploadFromVector(meshIndexData,0,meshIndexData.length);
@@ -152,8 +152,8 @@ package Evocati.manager
 		 */
 		protected function setWholeScreenData():void
 		{
-			wholeScreenIndexData = Square.getSquareIndex();
-			wholeScreenVerticesData = Square.getFullScreenSquareVertex();			
+			wholeScreenIndexData = MeshGenerate.getSquareIndex();
+			wholeScreenVerticesData = MeshGenerate.getFullScreenSquareVertex();			
 			
 			wholeScreenIndexBuffer = context3D.createIndexBuffer(wholeScreenIndexData.length);
 			wholeScreenIndexBuffer.uploadFromVector(wholeScreenIndexData,0,wholeScreenIndexData.length);
@@ -178,8 +178,8 @@ package Evocati.manager
 			while (++i < batchNum)
 			{
 				var obj:BaseObjInfo = arr[i] as BaseObjInfo;
-				Square.addSquareIndexByNumber(batchMeshIndexData,i);
-				Square.addSquareVertexPixel(batchMeshVertexData,obj,i);
+				MeshGenerate.addSquareIndexByNumber(batchMeshIndexData,i);
+				MeshGenerate.addSquareVertexPixel(batchMeshVertexData,obj,i);
 				//				Square.addSquareVertex(
 				//					batchMeshVertexData,
 				//					obj.sizeX*2/_gameWidth,
@@ -219,8 +219,8 @@ package Evocati.manager
 			while (++i < len)
 			{
 				var obj:BaseParticle = arr[i] as BaseParticle;
-				Square.addSquareIndexByNumber(batchMeshIndexData,i);
-				Square.addParticleVertexPixel(batchMeshVertexData,obj,i);
+				MeshGenerate.addSquareIndexByNumber(batchMeshIndexData,i);
+				MeshGenerate.addParticleVertexPixel(batchMeshVertexData,obj,i);
 			}			
 			if(batchMeshVertexData.length == 0) 
 				return false;
@@ -240,6 +240,32 @@ package Evocati.manager
 		}
 		
 		/**
+		 * 上传连续粒子数据给GPU
+		 */
+		public function setLinkParticleData(data:ParticleLink):Boolean
+		{		
+			var arr:Array = MeshGenerate.generateVertexLink(data.vertexArray,data.nodeNum);
+			batchMeshIndexData = arr[0];
+			batchMeshVertexData = arr[1];
+			
+			if(batchMeshVertexData.length == 0) 
+				return false;
+			
+			if(batchIndexBuffer)
+				batchIndexBuffer.dispose();
+			if(batchVertexBuffer)
+				batchVertexBuffer.dispose();
+			
+			batchIndexBuffer = context3D.createIndexBuffer(batchMeshIndexData.length);
+			batchIndexBuffer.uploadFromVector(batchMeshIndexData,0,batchMeshIndexData.length);
+			
+			batchVertexBuffer = context3D.createVertexBuffer(batchMeshVertexData.length/7, 7); 
+			batchVertexBuffer.uploadFromVector(batchMeshVertexData, 0, batchMeshVertexData.length/7);
+			
+			return true;
+		}
+		
+		/**
 		 * 画缓存中的三角形
 		 */
 		public function singleDraw():void
@@ -250,7 +276,7 @@ package Evocati.manager
 				Context3DVertexBufferFormat.FLOAT_2);
 			context3D.setVertexBufferAt(2, vertexBuffer, 5, 
 				Context3DVertexBufferFormat.FLOAT_4);
-			context3D.setVertexBufferAt(3, batchVertexBuffer, 5,        //不知道为什么在别的地方使用了某个寄存器，shader里就一定要用到该寄存器，否则什么都画不出来
+			context3D.setVertexBufferAt(3, batchVertexBuffer, 5,        //不知道为什么在别的地方使用了某个寄存器，其他的shader里就一定也要用到该寄存器，否则什么都画不出来
 				Context3DVertexBufferFormat.FLOAT_4);
 			context3D.setVertexBufferAt(4, batchVertexBuffer, 5,
 				Context3DVertexBufferFormat.FLOAT_4);
