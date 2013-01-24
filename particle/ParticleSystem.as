@@ -78,6 +78,7 @@ package Evocati.particle
 			particlelink.posX = position.x;
 			particlelink.posY = position.y;
 			particlelink.posZ = position.z;
+			particlelink.maxLife = maxLife;
 //			particlelink.velocity = velocity;
 //			particlelink.maxLife = maxLife;
 //			particlelink.sizeX = sizeX;

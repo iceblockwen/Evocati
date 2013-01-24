@@ -338,6 +338,7 @@ package Evocati
 			shaderManager.setShaders("COMMON","COMMON_DXT5");
 			shaderManager.setShaders("BATCH","COMMON_DXT5");
 			shaderManager.setShaders("PARTICLE_BATCH","COMMON_PARTICLE_DXT5");
+			shaderManager.setShaders("PARTICLE_LINK","COMMON_PARTICLE_LINK_DXT5");
 			
 			renderManager.initCommonMeshData();
 			
@@ -443,6 +444,14 @@ package Evocati
 			renderManager.batchDrawParticle();
 		}
 		/**
+		 * 画当前批量缓存中的多边形(粒子链)
+		 */
+		protected function drawParticleLink():void
+		{
+			registerManager.setTransformMatrixToRegister(transformManager.modelViewProjection);
+			renderManager.drawParticleLink();
+		}
+		/**
 		 * 渲染当前帧
 		 */
 		protected function render(event:Event):void
@@ -514,12 +523,14 @@ package Evocati
 				if(renderManager.setBatchParticleData(id))
 				{
 					registerManager.setTextureSizeToRegister(textureManager.getTextureSize(id));
-					registerManager.setParticleParam(0);
+					registerManager.setParticleParam(100);
 					textureManager.setTexture(id,0);
 					transformManager.setTransform(0,0,0,0,0,0,1,1);
 					batchDrawParticle();
 				}
 			}
+			context3D.setProgram ( shaderManager.getShaders("PARTICLE_LINK","COMMON_PARTICLE_LINK_DXT5"));
+			context3D.setCulling(Context3DTriangleFace.NONE); 
 			for each(var link:ParticleLink in particleSystem._particleLinkList)
 			{
 				if(renderManager.setLinkParticleData(link))
@@ -529,11 +540,11 @@ package Evocati
 					registerManager.setParticleParam(0);
 					textureManager.setTexture(id,0);
 					transformManager.setTransform(0,0,0,0,0,0,1,1);
-					batchDrawParticle();
+					drawParticleLink();
 				}
 			}
 			batchUploadTime = getTimer() - time;
-			
+			context3D.setCulling(Context3DTriangleFace.BACK); 
 			//渲染单个矩形
 			renderManager.setBlendmode(1);
 			context3D.setProgram ( shaderManager.getShaders("COMMON","COMMON_DXT5"));

@@ -240,7 +240,7 @@ package Evocati.manager
 		}
 		
 		/**
-		 * 上传连续粒子数据给GPU
+		 * 上传连续粒子链数据给GPU
 		 */
 		public function setLinkParticleData(data:ParticleLink):Boolean
 		{		
@@ -321,6 +321,26 @@ package Evocati.manager
 			context3D.setVertexBufferAt(3, batchVertexBuffer, 9, 
 				Context3DVertexBufferFormat.FLOAT_3);
 			context3D.setVertexBufferAt(4, batchVertexBuffer, 12,
+				Context3DVertexBufferFormat.FLOAT_2);
+			
+			context3D.drawTriangles(batchIndexBuffer, 0, batchMeshIndexData.length/3);
+			
+			polyNum += batchMeshIndexData.length/3;
+		}
+		/**
+		 * 画缓存中的三角形(粒子链)
+		 */
+		public function drawParticleLink():void
+		{
+			context3D.setVertexBufferAt(0, batchVertexBuffer, 0, 
+				Context3DVertexBufferFormat.FLOAT_3);
+			context3D.setVertexBufferAt(1, batchVertexBuffer, 3, 
+				Context3DVertexBufferFormat.FLOAT_2);
+			context3D.setVertexBufferAt(2, batchVertexBuffer, 5, 
+				Context3DVertexBufferFormat.FLOAT_2);
+			context3D.setVertexBufferAt(3, batchVertexBuffer, 5, 
+				Context3DVertexBufferFormat.FLOAT_2);
+			context3D.setVertexBufferAt(4, batchVertexBuffer, 5,
 				Context3DVertexBufferFormat.FLOAT_2);
 			
 			context3D.drawTriangles(batchIndexBuffer, 0, batchMeshIndexData.length/3);

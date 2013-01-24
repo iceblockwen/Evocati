@@ -82,13 +82,18 @@ package Evocati.object
 			var indexs:Vector.<uint>  = new Vector.<uint>(numIndex);
 			var link:Vector.<Number>  = new Vector.<Number>(n*7);
 			var index:int = 0;
+//			var interval:Number = 1/(1-nodeNum)/2;
 			var i:int = -1;
 			while(++i < n)
 			{
 				link[index++] = arr[i][0];  //x
 				link[index++] = arr[i][1];  //y
 				link[index++] = arr[i][2];  //z
-				link[index++] = 0.5;   //u
+				if(i<2)
+					link[index++] = 0;   //u
+				else
+					link[index++] = 0.5;   //u
+//				link[index++] = i/2*interval;   //u
 				if(i%2)
 					link[index++] = 0;     //v
 				else

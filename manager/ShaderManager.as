@@ -104,6 +104,22 @@ package Evocati.manager
 				"mov v1, vt2\n" +
 				// 传递顶点颜色数据给像素着色器
 				"mov v2, va2\n" +
+				// 传递时间数据给像素着色器
+				"mov v4, va4\n";
+			
+			_vertexShaderList["PARTICLE_LINK"] = 
+				"mov vt0, va0\n" +
+				//归一化
+				"div vt0, vt0, vc5\n" +
+				// 设置空间位置和旋转和缩放  
+				"m44 op, vt0, vc0\n" +
+				// 传递mesh顶点坐标给像素着色器
+				"mov v0, vt0\n" +
+				// 传递纹理坐标给像素着色器
+				"mov v1, va1\n" +
+				// 传递时间数据给像素着色器
+				"mov v2, va2\n" +
+				"mov v3, va3\n" +
 				// 传递消隐数据给像素着色器
 				"mov v4, va4\n";
 			
@@ -134,8 +150,13 @@ package Evocati.manager
 				"mov oc, ft0\n";
 			_pixelShaderList["COMMON_PARTICLE_DXT5"] =
 				// 采样纹理数据传递给颜色输出
-				"tex ft0, v1, fs0 <2d,nearest,nomip,dxt5>\n"+
+				"tex ft0, v1, fs0 <2d,linear,nomip,dxt5>\n"+
 				"mul ft0.w, ft0.w, v4.y\n"+
+				"mov oc, ft0\n";
+			_pixelShaderList["COMMON_PARTICLE_LINK_DXT5"] =
+				// 采样纹理数据传递给颜色输出
+				"tex ft0, v1, fs0 <2d,linear,nomip,dxt5>\n"+
+				"mul ft0.w, ft0.w, v2.y\n"+
 				"mov oc, ft0\n";
 			_pixelShaderList["COMMON_FOG_DXT5"] =
 				// 采样纹理数据传递给颜色输出

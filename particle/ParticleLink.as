@@ -1,5 +1,7 @@
 package Evocati.particle
 {
+	import flash.geom.Point;
+	
 	import Evocati.Interface.IObj3D;
 
 	public class ParticleLink implements IObj3D
@@ -8,11 +10,14 @@ package Evocati.particle
 		public var posY:Number;
 		public var posZ:Number;
 		public var texId:String;
+		public var maxLife:Number;
+		public var thickness:int = 30;
 		
 		public var nodeNum:int;
 		
 		public var vertexArray:Array;
 		private var _timeAdd:Number = 0;
+		private var _lastPoint:Point = new Point();
 		public function ParticleLink()
 		{
 			vertexArray = [];
@@ -20,27 +25,68 @@ package Evocati.particle
 		public function step(time:Number):void
 		{
 			_timeAdd += time;
-			if(_timeAdd>1)
+			if(_timeAdd>0.016)
 			{
 				getTwoVectex();
-				for each(var arr:Array in vertexArray)
+				var i:int = -1;
+				while(++i < nodeNum)
 				{
-					arr[3] += time; 
+					var index:int = i*2
+					vertexArray[index][3] += _timeAdd;
+					vertexArray[index+1][3] += _timeAdd;
+					vertexArray[index][4] = 1 - vertexArray[index][3]/maxLife;
+					vertexArray[index+1][4] = 1 - vertexArray[index+1][3]/maxLife;
+					if(vertexArray[index][3] > maxLife && vertexArray[index-2] != null)
+					{
+						vertexArray.shift();
+						vertexArray.shift();
+//						trace("删除节点"+index+"长度"+vertexArray.length);
+						i--;
+						nodeNum--;
+					}
 				}
 				_timeAdd = 0;
 			}
 		}
 		
-		private function getTwoVectex():void
+		private var tmpPoint:Point = new Point();
+		private function getTwoVectex():Boolean
 		{
+			if(posX == _lastPoint.x && posY == _lastPoint.y)
+				return false;
 			nodeNum++;
-			vertexArray.push([posX-10,posY-10,posZ,0,0]);
-			vertexArray.push([posX+10,posY+10,posZ,0,0]);
+			tmpPoint = getPerpendicularLine(_lastPoint,new Point(posX,posY),20);
+			vertexArray.push([tmpPoint.x+posX,tmpPoint.y+posY,posZ,0,1]);
+			vertexArray.push([posX,posY,posZ,0,1]);
+			_lastPoint.setTo(posX,posY);
+			return true;
+		}
+		private function getPerpendicularLine(p1:Point,p2:Point,d:Number):Point
+		{
+			var x:Number;
+			var y:Number;
+			if(Point.distance(p1,p2)<10)
+			{
+				return tmpPoint;
+			}
+			if((p1.y - p2.y)==0)
+			{
+				x = 0;
+				y = d;
+			}
+			else
+			{
+				var slope:Number = (p1.x - p2.x)/(p1.y - p2.y);
+				x = d/Math.sqrt(1+slope*slope);
+				y = d*(-slope)/Math.sqrt(1+slope*slope);
+			}
+//			trace(x+","+y);
+			return new Point(x,y);
 		}
 		public function move(x:Number,y:Number,z:Number):void
 		{
 			posX = x;
-			posY = y   //在shader里反向了
+			posY = -y   //stage3d的Y轴是反的
 			posZ = z;
 		}
 		
