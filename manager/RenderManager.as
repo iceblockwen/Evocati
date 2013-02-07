@@ -6,7 +6,7 @@ package Evocati.manager
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
 	
-	import Evocati.object.BaseObjInfo;
+	import Evocati.object.Base2DRectObjInfo;
 	import Evocati.object.MeshGenerate;
 	import Evocati.particle.BaseParticle;
 	import Evocati.particle.ParticleLink;
@@ -177,7 +177,7 @@ package Evocati.manager
 			var i:int = -1;
 			while (++i < batchNum)
 			{
-				var obj:BaseObjInfo = arr[i] as BaseObjInfo;
+				var obj:Base2DRectObjInfo = arr[i] as Base2DRectObjInfo;
 				MeshGenerate.addSquareIndexByNumber(batchMeshIndexData,i);
 				MeshGenerate.addSquareVertexPixel(batchMeshVertexData,obj,i);
 				//				Square.addSquareVertex(
@@ -278,9 +278,9 @@ package Evocati.manager
 				Context3DVertexBufferFormat.FLOAT_2);
 			context3D.setVertexBufferAt(2, vertexBuffer, 5, 
 				Context3DVertexBufferFormat.FLOAT_4);
-			context3D.setVertexBufferAt(3, batchVertexBuffer, 5,        //不知道为什么在别的地方使用了某个寄存器，其他的shader里就一定也要用到该寄存器，否则什么都画不出来
+			context3D.setVertexBufferAt(3, vertexBuffer, 5,        //不知道为什么在别的地方使用了某个寄存器，其他的shader里就一定也要用到该寄存器，否则什么都画不出来
 				Context3DVertexBufferFormat.FLOAT_4);
-			context3D.setVertexBufferAt(4, batchVertexBuffer, 5,
+			context3D.setVertexBufferAt(4, vertexBuffer, 5,
 				Context3DVertexBufferFormat.FLOAT_4);
 
 			context3D.drawTriangles(indexBuffer, 0, meshIndexData.length/3);

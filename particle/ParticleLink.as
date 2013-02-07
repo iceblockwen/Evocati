@@ -11,7 +11,7 @@ package Evocati.particle
 		public var posZ:Number;
 		public var texId:String;
 		public var maxLife:Number;
-		public var thickness:int = 30;
+		public var thickness:int = 10;
 		
 		public var nodeNum:int;
 		
@@ -49,15 +49,16 @@ package Evocati.particle
 			}
 		}
 		
-		private var tmpPoint:Point = new Point();
+		private var tmp:Point;
 		private function getTwoVectex():Boolean
 		{
-			if(posX == _lastPoint.x && posY == _lastPoint.y)
+			if(_lastPoint && posX == _lastPoint.x && posY == _lastPoint.y)
 				return false;
 			nodeNum++;
-			tmpPoint = getPerpendicularLine(_lastPoint,new Point(posX,posY),20);
-			vertexArray.push([tmpPoint.x+posX,tmpPoint.y+posY,posZ,0,1]);
-			vertexArray.push([posX,posY,posZ,0,1]);
+			tmp = getPerpendicularLine(_lastPoint,new Point(posX,posY),thickness);
+			vertexArray.push([tmp.x+posX,tmp.y+posY,posZ,0,1]);
+			vertexArray.push([posX-tmp.x,posY-tmp.y,posZ,0,1]);
+			
 			_lastPoint.setTo(posX,posY);
 			return true;
 		}
@@ -65,22 +66,42 @@ package Evocati.particle
 		{
 			var x:Number;
 			var y:Number;
-			if(Point.distance(p1,p2)<10)
+			if(Point.distance(p1,p2)<5)
 			{
-				return tmpPoint;
+				return tmp;
+			}
+			var mul:int;
+			var a:int = p2.x - p1.x;
+			var b:int = p2.y - p1.y;
+			if(p1.x >=p2.x)
+			{
+				mul = -1;
+			}
+			else
+			{
+				mul = 1;
 			}
 			if((p1.y - p2.y)==0)
 			{
 				x = 0;
-				y = d;
+				y = mul*d;
 			}
 			else
 			{
 				var slope:Number = (p1.x - p2.x)/(p1.y - p2.y);
 				x = d/Math.sqrt(1+slope*slope);
 				y = d*(-slope)/Math.sqrt(1+slope*slope);
+				if(a*y - b*x > 0)
+					mul = 1;
+				else
+					mul = -1;
+				x = mul*x;
+				y = mul*y;
 			}
-//			trace(x+","+y);
+			x = int(x);
+			y = int(y);
+//			trace("("+p1.x +","+ p1.y+")"+"("+p2.x  +","+  p2.y+")"+" slope "+slope+"  "+
+//			x+","+y+" mul "+mul);
 			return new Point(x,y);
 		}
 		public function move(x:Number,y:Number,z:Number):void

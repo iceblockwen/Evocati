@@ -50,7 +50,7 @@ package Evocati.manager
 				"add vt2.xyzw, vt1.xyzw, vc4.zwzw\n" +
 				"mov v1, vt2\n" +
 				// 传递顶点颜色数据给像素着色器
-				"mov v2, va2\n" +
+				"mov v2, va2\n"+
 				"mov v3, va3\n" +
 				"mov v4, va4\n";
 			

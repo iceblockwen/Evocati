@@ -2,9 +2,9 @@ package Evocati.particle
 {
 	import flash.geom.Vector3D;
 	
-	import Evocati.object.BaseObjInfo;
+	import Evocati.object.Base2DRectObjInfo;
 
-	public class BaseParticle extends BaseObjInfo
+	public class BaseParticle extends Base2DRectObjInfo
 	{
 		public var active:Boolean = true;
 		public var life:Number = 0;

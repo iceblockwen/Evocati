@@ -1,7 +1,7 @@
 package Evocati.scene
 {
-	import Evocati.object.BaseObjInfo;
-	import Evocati.object.GroupObjInfo;
+	import Evocati.object.Base2DRectObjInfo;
+	import Evocati.object.Group2DRectObjInfo;
 	
 	import flash.utils.Dictionary;
 
@@ -27,7 +27,7 @@ package Evocati.scene
 			else 
 				return null;
 		}
-		public function addSingleObj(info:BaseObjInfo):void
+		public function addSingleObj(info:Base2DRectObjInfo):void
 		{
 			_singleObjList.push(info);
 			if(_totalList[info.id] != undefined)
@@ -41,7 +41,7 @@ package Evocati.scene
 			if(_totalList[id] != undefined)
 			{
 				var arr:Array = _totalList[id];
-				var info:BaseObjInfo = arr[0];
+				var info:Base2DRectObjInfo = arr[0];
 				if(arr[1] == "")
 				{
 					_singleObjList.splice(_singleObjList.indexOf(info),1);
@@ -74,7 +74,7 @@ package Evocati.scene
 			}
 		}
 		
-		public function addMapTile(info:BaseObjInfo):void
+		public function addMapTile(info:Base2DRectObjInfo):void
 		{
 			if(_mapTileList[info.id] != undefined)
 				trace("已经有此id地图块"+info.id);
@@ -82,7 +82,7 @@ package Evocati.scene
 				_mapTileList[info.id] = info;
 		}
 		
-		public function findTile(id:String):BaseObjInfo
+		public function findTile(id:String):Base2DRectObjInfo
 		{
 			if(_mapTileList[id] != undefined)
 				return _mapTileList[id];
@@ -99,7 +99,7 @@ package Evocati.scene
 				trace("无法删除地图切片id:"+id+"找不到此id");
 		}
 		
-		public function addGroupObj(info:GroupObjInfo):Boolean
+		public function addGroupObj(info:Group2DRectObjInfo):Boolean
 		{
 			for each(var child:Array in info.childObjsInfo)
 			{
@@ -109,7 +109,7 @@ package Evocati.scene
 			return false;
 		}
 		
-		public function addBatchObj(info:BaseObjInfo,batchId:String):Boolean
+		public function addBatchObj(info:Base2DRectObjInfo,batchId:String):Boolean
 		{
 			if(batchId == "")
 			{
@@ -136,7 +136,7 @@ package Evocati.scene
 			if(_totalList[id] != undefined)
 			{
 				var arr:Array = _totalList[id] as Array;
-				(arr[0] as BaseObjInfo).move(x,y,0);
+				(arr[0] as Base2DRectObjInfo).move(x,y,0);
 			}
 			else
 				trace("找不到id:"+id);
@@ -147,7 +147,7 @@ package Evocati.scene
 			if(_totalList[id] != undefined)
 			{
 				var arr:Array = _totalList[id] as Array;
-				(arr[0] as BaseObjInfo).rotate(x,y,z);
+				(arr[0] as Base2DRectObjInfo).rotate(x,y,z);
 			}
 			else
 				trace("找不到id:"+id);

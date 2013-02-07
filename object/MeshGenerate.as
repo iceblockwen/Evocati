@@ -183,7 +183,7 @@ package Evocati.object
 		/** 
 		 * 批处理一个矩形的顶点数组(像素数据,Shader做归一化运算,略微提高性能)
 		 * */
-		public static function addSquareVertexPixel(vector:Vector.<Number>,obj:BaseObjInfo,n:int):void
+		public static function addSquareVertexPixel(vector:Vector.<Number>,obj:Base2DRectObjInfo,n:int):void
 		{
 			var index:int = n*36;
 			var xoffset:Number;

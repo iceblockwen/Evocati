@@ -21,8 +21,8 @@ package Evocati
 	import Evocati.manager.ShaderManager;
 	import Evocati.manager.TextureManager;
 	import Evocati.manager.TransformManager;
-	import Evocati.object.BaseObjInfo;
-	import Evocati.object.GroupObjInfo;
+	import Evocati.object.Base2DRectObjInfo;
+	import Evocati.object.Group2DRectObjInfo;
 	import Evocati.particle.ParticleEmitter;
 	import Evocati.particle.ParticleLink;
 	import Evocati.particle.ParticleSystem;
@@ -138,7 +138,7 @@ package Evocati
 		/**
 		 * 向场景增加单个矩形(着色器操作参数)
 		 */
-		public function addSingleSquare(info:BaseObjInfo):void
+		public function addSingleSquare(info:Base2DRectObjInfo):void
 		{
 			_scene.addSingleObj(info);
 		}
@@ -146,7 +146,7 @@ package Evocati
 		/**
 		 * 向场景增加物件组
 		 */
-		public function addGroupObj(info:GroupObjInfo):void
+		public function addGroupObj(info:Group2DRectObjInfo):void
 		{
 			_scene.addGroupObj(info);
 		}
@@ -162,7 +162,7 @@ package Evocati
 		/**
 		 * 单一物体是否在场景中
 		 */
-		public function isInScene(info:BaseObjInfo):Boolean
+		public function isInScene(info:Base2DRectObjInfo):Boolean
 		{
 			if(info && _scene.findObjById(info.id))
 			{
@@ -173,7 +173,7 @@ package Evocati
 		/**
 		 * 地图块是否在场景中
 		 */
-		public function isMapTileInScene(info:BaseObjInfo):Boolean
+		public function isMapTileInScene(info:Base2DRectObjInfo):Boolean
 		{
 			if(info && (_scene._mapTileList[info.id] != undefined))
 			{
@@ -194,7 +194,7 @@ package Evocati
 		/**
 		 * 向场景增加地图块
 		 */
-		public function addMapTile(info:BaseObjInfo):void
+		public function addMapTile(info:Base2DRectObjInfo):void
 		{
 			_scene.addMapTile(info);
 		}
@@ -210,14 +210,14 @@ package Evocati
 		/**
 		 * 向场景增加一个批量处理矩形(预存参数)
 		 */
-		public function addBatchSquare(info:BaseObjInfo,batchId:String):void
+		public function addBatchSquare(info:Base2DRectObjInfo,batchId:String):void
 		{
 			_scene.addBatchObj(info,batchId)
 		}
 		/**
 		 * 场景修改批量处理矩形的纹理(预存参数)
 		 */
-		public function updateBatchSquareTex(info:BaseObjInfo,batchId:String):void
+		public function updateBatchSquareTex(info:Base2DRectObjInfo,batchId:String):void
 		{
 			if(_scene.isObjInBatch(info.id,batchId))
 				return;
@@ -479,7 +479,7 @@ package Evocati
 			
 			//渲染详细地图
 			registerManager.setTextureSizeToRegister(commonData.mapTextureSize);
-			for each(var k:BaseObjInfo in  _scene._mapTileList)
+			for each(var k:Base2DRectObjInfo in  _scene._mapTileList)
 			{
 				var index:int =k.textureIndex;
 				textureId =  k.textureId;
@@ -497,6 +497,28 @@ package Evocati
 			}
 			
 			renderManager.setBlendmode(1);
+			//渲染单个矩形
+			context3D.setProgram ( shaderManager.getShaders("COMMON","COMMON_DXT5"));
+			registerManager.setFogParam(new Vector3D(),3,new Vector3D(0.5,0.5,0.5));
+			len = _scene._singleObjList.length;
+			var i:int = -1;
+			while(++i < len)
+			{
+				index = _scene._singleObjList[i].textureIndex;
+				textureId =  _scene._singleObjList[i].textureId;
+				registerManager.setTextureSizeToRegister(TexturePacker.getCompatibleSize( _scene._singleObjList[i].textureCoordinates[index].texSize));
+				var obj:Base2DRectObjInfo = _scene._singleObjList[i];
+				textureManager.setTexture(textureId,0);
+				registerManager.setUVToRegister(obj.textureCoordinates[index].bound.width,
+					obj.textureCoordinates[index].bound.height,
+					obj.textureCoordinates[index].xOffset,
+					obj.textureCoordinates[index].yOffset);
+				transformManager.setTransform(obj.originX, obj.originY, obj.originZ, obj.rx, obj.ry, obj.rz,
+					obj.sizeX*2/commonData.gameWidth,
+					obj.sizeY*2/commonData.gameHeight
+				);
+				draw();
+			}
 			
 			context3D.setProgram ( shaderManager.getShaders('BATCH','COMMON_DXT5'));
 			//渲染批量对象
@@ -530,7 +552,7 @@ package Evocati
 				}
 			}
 			context3D.setProgram ( shaderManager.getShaders("PARTICLE_LINK","COMMON_PARTICLE_LINK_DXT5"));
-			context3D.setCulling(Context3DTriangleFace.NONE); 
+//			context3D.setCulling(Context3DTriangleFace.NONE); 
 			for each(var link:ParticleLink in particleSystem._particleLinkList)
 			{
 				if(renderManager.setLinkParticleData(link))
@@ -544,29 +566,6 @@ package Evocati
 				}
 			}
 			batchUploadTime = getTimer() - time;
-			context3D.setCulling(Context3DTriangleFace.BACK); 
-			//渲染单个矩形
-			renderManager.setBlendmode(1);
-			context3D.setProgram ( shaderManager.getShaders("COMMON","COMMON_DXT5"));
-			registerManager.setFogParam(new Vector3D(),3,new Vector3D(0.5,0.5,0.5));
-			len = _scene._singleObjList.length;
-			for(var i:int = 0;i<len;i++)
-			{
-				index = _scene._singleObjList[i].textureIndex;
-				textureId =  _scene._singleObjList[i].textureId;
-				registerManager.setTextureSizeToRegister(TexturePacker.getCompatibleSize( _scene._singleObjList[i].textureCoordinates[index].texSize));
-				var obj:BaseObjInfo = _scene._singleObjList[i];
-				textureManager.setTexture(textureId,0);
-				registerManager.setUVToRegister(obj.textureCoordinates[index].bound.width,
-					obj.textureCoordinates[index].bound.height,
-					obj.textureCoordinates[index].xOffset,
-					obj.textureCoordinates[index].yOffset);
-				transformManager.setTransform(obj.originX, obj.originY, obj.originZ, obj.rx, obj.ry, obj.rz,
-					obj.sizeX*2/commonData.gameWidth,
-					obj.sizeY*2/commonData.gameHeight
-				);
-				draw();
-			}
 			//后处理效果
 			if(mainConfig.usePostFx)		
 			{
